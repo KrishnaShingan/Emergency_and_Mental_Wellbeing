@@ -1,43 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { PaperAirplaneIcon, XIcon, UserIcon } from "@heroicons/react/solid";
+import { PaperAirplaneIcon, XIcon } from "@heroicons/react/solid";
 import { motion } from "framer-motion";
 
 const Support = () => {
-  const [messages, setMessages] = useState([{ sender: "bot", text: "👋 Hello! I’m here to assist you with mental wellbeing and emergencies. How can I help?" }]);
+  const [messages, setMessages] = useState([
+    { sender: "bot", text: "Hello! I’m here to assist with mental wellbeing and emergencies. How can I help?" }
+  ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-
     const userMessage = { sender: "user", text: input };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // ✅ Small delay for a natural feel
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const response = await axios.post("http://localhost:8080/chatbot/send", { message: input });
-
-      let botReply = response.data.response;
-      setMessages((prevMessages) => [...prevMessages, { sender: "bot", text: botReply }]);
+      setMessages((prev) => [...prev, { sender: "bot", text: response.data.response }]);
     } catch (error) {
-      console.error("❌ Chatbot error:", error);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "bot", text: "⚠️ Oops! Something went wrong. Try again." },
-      ]);
+      setMessages((prev) => [...prev, { sender: "bot", text: "Oops! Something went wrong." }]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      sendMessage();
-    }
+    if (e.key === "Enter") sendMessage();
   };
 
   useEffect(() => {
@@ -45,23 +38,20 @@ const Support = () => {
   }, [messages]);
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-teal-200 text-gray-900">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 50, opacity: 0 }}
-        className="w-full max-w-lg shadow-lg rounded-xl bg-white border border-gray-300 overflow-hidden"
+        className="w-full max-w-lg bg-white rounded-lg shadow-sm overflow-hidden"
       >
-        {/* Header */}
-        <div className="bg-blue-500 text-white p-4 flex justify-between items-center shadow-md">
-          <span className="font-semibold text-lg">💬 AI Chat Assistant</span>
-          <button className="text-white hover:opacity-80">
+        <div className="bg-teal-600 text-white p-4 flex justify-between items-center">
+          <span className="font-medium text-lg">AI Chat Assistant</span>
+          <button className="hover:opacity-80">
             <XIcon className="w-6 h-6" />
           </button>
         </div>
 
-        {/* Chat Messages */}
-        <div className="h-96 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-400">
+        <div className="h-96 overflow-y-auto p-4 space-y-4">
           {messages.map((msg, i) => (
             <motion.div
               key={i}
@@ -70,42 +60,31 @@ const Support = () => {
               transition={{ duration: 0.3 }}
               className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
-              <div className="flex items-center space-x-2">
-                {msg.sender === "bot"}
-                <div
-                  className={`p-3 text-base rounded-lg shadow ${
-                    msg.sender === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-900"
-                  }`}
-                >
-                  {msg.text}
-                </div>
-                {msg.sender === "user" && <UserIcon className="w-6 h-6 text-blue-500" />}
+              <div
+                className={`p-3 rounded-md shadow-sm ${
+                  msg.sender === "user" ? "bg-teal-600 text-white" : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                {msg.text}
               </div>
             </motion.div>
           ))}
-
-          {loading && (
-            <div className="text-gray-500 text-sm animate-pulse">✍️ AI is typing...</div>
-          )}
-
+          {loading && <div className="text-gray-600 animate-pulse">AI is typing...</div>}
           <div ref={chatEndRef} />
         </div>
 
-        {/* Input Box */}
         <div className="border-t p-3 flex items-center bg-gray-50">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown} // ✅ Press Enter to send message
+            onKeyDown={handleKeyDown}
             placeholder="Type your message..."
-            className="w-full p-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
           <button
             onClick={sendMessage}
-            className="ml-2 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-200"
+            className="ml-2 bg-teal-600 text-white p-2 rounded-md hover:bg-teal-700 transition duration-200"
           >
             <PaperAirplaneIcon className="w-6 h-6" />
           </button>

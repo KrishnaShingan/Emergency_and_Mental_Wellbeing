@@ -3,17 +3,15 @@ package com.example.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    private final String SECRET_KEY = "YOUR_SUPER_SECRET_KEY_CHANGE_THIS"; // 🔹 Set a custom key
-    private final long EXPIRATION_TIME = 86400000; // 🔹 1 day expiration
+    private final String SECRET_KEY = "THIS_IS_A_SUPER_SECRET_KEY_32_BYTES_LONG"; // ✅ Use 32+ chars
+    private final long EXPIRATION_TIME = 86400000; // ✅ 1 day expiration
 
-    private final SecretKey key = Keys.hmacShaKeyFor(Base64.getEncoder().encode(SECRET_KEY.getBytes()));
+    private final SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     public String generateToken(String email) {
         return Jwts.builder()

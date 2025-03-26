@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const Video = () => {
   const [query, setQuery] = useState("Stress");
   const [videos, setVideos] = useState([]);
-  const [videoCache, setVideoCache] = useState({}); // ✅ Cache for storing API responses
+  const [videoCache, setVideoCache] = useState({});
   const [error, setError] = useState(null);
 
   const categories = [
@@ -17,100 +17,89 @@ const Video = () => {
 
   const fetchVideos = async (searchTerm) => {
     setError(null);
-
-    // ✅ Check if the result is already in cache
     if (videoCache[searchTerm]) {
-      console.log(`⚡ Fetching from cache: ${searchTerm}`);
-      setVideos(videoCache[searchTerm]); // Load from cache
+      setVideos(videoCache[searchTerm]);
       return;
     }
-
     try {
-      console.log(`🔍 Fetching videos from API: ${searchTerm}`);
       const response = await fetch(`http://localhost:8080/api/videos/${searchTerm}`);
-
       if (!response.ok) {
-        console.error(`❌ API Error: ${response.status} - ${response.statusText}`);
-        setError(response.status === 403 ? "YouTube API quota exceeded. Try again later." : "Failed to fetch videos.");
+        setError(response.status === 403 ? "YouTube API quota exceeded." : "Failed to fetch videos.");
         return;
       }
-
-      const text = await response.text();
-      if (!text) {
-        console.error("⚠️ Empty response from server");
-        setError("No videos found.");
-        return;
-      }
-
-      const data = JSON.parse(text);
+      const data = await response.json();
       if (!data.items) {
         setError("No videos found.");
         return;
       }
-
       setVideos(data.items);
-      setVideoCache((prevCache) => ({ ...prevCache, [searchTerm]: data.items })); // ✅ Store in cache
+      setVideoCache((prev) => ({ ...prev, [searchTerm]: data.items }));
     } catch (error) {
-      console.error("❌ Network Error:", error.message);
-      setError("Failed to load videos. Check your internet connection.");
+      setError("Failed to load videos.");
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-4">Video Recommendations</h1>
-      
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Search videos..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="border p-2 flex-1 rounded"
-        />
-        <button
-          onClick={() => fetchVideos(query)}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Search
-        </button>
-      </div>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-3xl font-semibold text-gray-800 text-center mb-8">
+          Video Recommendations
+        </h1>
 
-      <div className="flex flex-wrap gap-2 mt-4">
-        {categories.map((category, index) => (
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <input
+            type="text"
+            placeholder="Search videos..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full sm:flex-1 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
           <button
-            key={index}
-            onClick={() => setQuery(category)}
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            onClick={() => fetchVideos(query)}
+            className="w-full sm:w-auto bg-teal-600 text-white px-6 py-3 rounded-md hover:bg-teal-700 transition duration-200"
           >
-            {category}
+            Search
           </button>
-        ))}
-      </div>
+        </div>
 
-      {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {categories.map((category, index) => (
+            <button
+              key={index}
+              onClick={() => setQuery(category)}
+              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition duration-200"
+            >
+              {category}
+            </button>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        {videos.map((video, index) => (
-          <div key={index} className="border rounded overflow-hidden">
-            <img
-              src={video.snippet.thumbnails.medium.url}
-              alt={video.snippet.title}
-              className="w-full"
-            />
-            <div className="p-3">
-              <h3 className="font-bold">{video.snippet.title}</h3>
-              <a
-                href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500"
-              >
-                Watch on YouTube
-              </a>
+        {error && <p className="text-red-500 text-center mb-6">{error}</p>}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {videos.map((video, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition duration-200">
+              <img
+                src={video.snippet.thumbnails.medium.url}
+                alt={video.snippet.title}
+                className="w-full h-40 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+                  {video.snippet.title}
+                </h3>
+                <a
+                  href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-teal-600 hover:underline"
+                >
+                  Watch on YouTube
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

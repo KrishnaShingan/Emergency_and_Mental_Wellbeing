@@ -5,22 +5,21 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-gradient-to-br from-blue-100 to-sky-400 min-h-screen flex flex-col items-center justify-center px-6 text-gray-800">
-      <h1 className="text-5xl font-extrabold text-blue-600">Welcome to Wellbeing</h1>
-      <p className="mt-4 text-lg text-center max-w-2xl">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-gray-800">
+      <h1 className="text-4xl font-semibold text-teal-700 mb-4">Welcome to Wellbeing</h1>
+      <p className="text-lg text-center max-w-2xl mb-8">
         Your one-stop platform for mental health support and emergency assistance.
       </p>
-
-      <div className="mt-8 flex flex-wrap gap-4">
+      <div className="flex gap-4">
         <button
           onClick={() => navigate("/login")}
-          className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-100 transition"
+          className="bg-teal-600 text-white px-6 py-3 rounded-md hover:bg-teal-700 transition duration-200"
         >
           Login
         </button>
         <button
           onClick={() => navigate("/register")}
-          className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-100 transition"
+          className="bg-teal-600 text-white px-6 py-3 rounded-md hover:bg-teal-700 transition duration-200"
         >
           Register
         </button>

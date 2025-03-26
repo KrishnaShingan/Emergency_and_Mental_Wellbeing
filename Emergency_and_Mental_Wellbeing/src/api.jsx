@@ -3,9 +3,16 @@ import axios from "axios";
 const API_URL = "http://localhost:8080";
 
 // ✅ Register User API
-export const registerUser = async ({ firstName, lastName, email, password }) => {
+export const registerUser = async ({ firstName, lastName, email, password, securityQuestion, securityAnswer }) => {
     try {
-        const response = await axios.post(`${API_URL}/auth/register`, { firstName, lastName, email, password });
+        const response = await axios.post(`${API_URL}/auth/register`, { 
+            firstName, 
+            lastName, 
+            email, 
+            password,
+            securityQuestion,
+            securityAnswer 
+        });
         console.log("✅ Registration successful:", response.data);
         return response.data;
     } catch (error) {
@@ -13,6 +20,74 @@ export const registerUser = async ({ firstName, lastName, email, password }) => 
         return null;
     }
 };
+
+const BASE_URL = "http://localhost:8080/auth";
+
+// 🔹 Step 1: Get security question for given email
+export const getSecurityQuestion = async (email) => {
+    try {
+        const response = await fetch(`${BASE_URL}/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) throw new Error("User not found");
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching security question:", error);
+        return null;
+    }
+};
+
+// 🔹 Step 2: Reset password after answering security question
+export const resetPassword = async (email, securityAnswer, newPassword) => {
+    try {
+        const response = await fetch(`${BASE_URL}/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, securityAnswer, newPassword }),
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(errorMessage);
+        }
+
+        return await response.text();
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        return error.message;
+    }
+};
+
+// ✅ Fetch User Profile API    
+
+const API_BASE_URL = "http://localhost:8080/api/profile";  // Update this with deployed backend URL
+
+// ✅ Fetch user profile
+export const getUserProfile = async (email) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/${email}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        return null;
+    }
+};
+
+// ✅ Update user profile
+export const updateUserProfile = async (profileData) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/update`, profileData);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return null;
+    }
+};
+
 
 // ✅ Login User API
 export const loginUser = async ({ email, password }) => {

@@ -1,116 +1,132 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { registerUser } from '../api'; // Import API function
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { registerUser } from "../api";
 
 const RegistrationPage = () => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [securityQuestion, setSecurityQuestion] = useState("");
+  const [securityAnswer, setSecurityAnswer] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
-    const validatePassword = (password) => {
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(password);
-    };
+  const validatePassword = (password) =>
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if ([firstName, lastName, email, password, securityQuestion, securityAnswer].some((field) => !field.trim())) {
+      setError("All fields are required!");
+      return;
+    }
+    if (!validatePassword(password)) {
+      setError("Password must have 1 uppercase, 1 number, 1 special character, and be 8+ characters.");
+      return;
+    }
 
-        if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim()) {
-            setError("All fields are required!");
-            return;
-        }
+    const response = await registerUser({ firstName, lastName, email, password, securityQuestion, securityAnswer });
+    if (response === "User registered successfully!") {
+      setSuccess("Registration successful! Redirecting...");
+      setTimeout(() => navigate("/login"), 2000);
+    } else {
+      setError(response || "Registration failed!");
+    }
+  };
 
-        if (!validatePassword(password)) {
-            setError("Password must have at least 1 uppercase letter, 1 number, 1 special character, and be 8+ characters long.");
-            return;
-        }
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <form onSubmit={handleSubmit} className="bg-white shadow-sm rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-2xl font-medium text-gray-700 text-center mb-6">Register</h2>
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
 
-        setError('');
-        setSuccess('');
-
-        const response = await registerUser({ firstName, lastName, email, password });
-
-        if (response === "User already exists!") {
-            setError("This email is already registered! Try logging in.");
-        } else if (response === "User registered successfully!") {
-            setSuccess("Registration Successful! Redirecting...");
-            setTimeout(() => navigate("/login"), 2000);
-        } else {
-            setError(response || "Registration failed! Try again.");
-        }
-    };
-
-    return (
-        <div className="bg-sky-100 flex flex-col items-center justify-center h-screen">
-            <form onSubmit={handleSubmit} className="bg-white shadow-lg p-6 rounded-lg w-96">
-                <h2 className="text-center text-black text-2xl py-2 mb-4 font-bold">Register</h2>
-
-                {error && <p className="text-red-500 text-sm text-center mb-3">{error}</p>}
-                {success && <p className="text-green-500 text-sm text-center mb-3">{success}</p>}
-
-                <div className="mb-4">
-                    <label className="font-semibold">First Name</label>
-                    <input 
-                        type="text" 
-                        className="w-full border px-3 py-2 focus:outline-none focus:border-sky-500 rounded"
-                        placeholder="Enter your first name" 
-                        value={firstName} 
-                        onChange={(e) => setFirstName(e.target.value)} 
-                        required
-                    />
-                </div>
-
-                <div className="mb-4">
-                    <label className="font-semibold">Last Name</label>
-                    <input 
-                        type="text" 
-                        className="w-full border px-3 py-2 focus:outline-none focus:border-sky-500 rounded"
-                        placeholder="Enter your last name" 
-                        value={lastName} 
-                        onChange={(e) => setLastName(e.target.value)} 
-                        required
-                    />
-                </div>
-
-                <div className="mb-4">
-                    <label className="font-semibold">Email</label>
-                    <input 
-                        type="email" 
-                        className="w-full border px-3 py-2 focus:outline-none focus:border-sky-500 rounded"
-                        placeholder="Enter your email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        required
-                    />
-                </div>
-
-                <div className="mb-4">
-                    <label className="font-semibold">Password</label>
-                    <input 
-                        type="password" 
-                        className="w-full border px-3 py-2 focus:outline-none focus:border-sky-500 rounded"
-                        placeholder="Enter your password" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        required
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                        Must have 1 uppercase letter, 1 number, 1 special character, and be 8+ characters long.
-                    </p>
-                </div>
-
-                <button type="submit" className="w-full bg-sky-500 text-white py-2 mt-2 rounded-lg hover:bg-sky-700 transition-colors">
-                    Register
-                </button>
-
-                <Link to="/login" className="mt-4 text-sm block text-center text-sky-500">Already have an account?</Link>
-            </form>
+        <div className="mb-4">
+          <label className="block text-gray-600 font-medium mb-2">First Name</label>
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="First name"
+            required
+          />
         </div>
-    );
+        <div className="mb-4">
+          <label className="block text-gray-600 font-medium mb-2">Last Name</label>
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="Last name"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-600 font-medium mb-2">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="Your email"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-600 font-medium mb-2">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="Your password"
+            required
+          />
+          <p className="text-xs text-gray-500 mt-1">1 uppercase, 1 number, 1 special character, 8+ chars</p>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-600 font-medium mb-2">Security Question</label>
+          <select
+            value={securityQuestion}
+            onChange={(e) => setSecurityQuestion(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            required
+          >
+            <option value="">Select a question</option>
+            <option value="What is your pet's name?">What is your pet's name?</option>
+            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+            <option value="What is your favorite book?">What is your favorite book?</option>
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-600 font-medium mb-2">Answer</label>
+          <input
+            type="text"
+            value={securityAnswer}
+            onChange={(e) => setSecurityAnswer(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="Your answer"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-teal-600 text-white px-6 py-3 rounded-md hover:bg-teal-700 transition duration-200"
+        >
+          Register
+        </button>
+
+        <Link to="/login" className="text-teal-600 hover:underline text-sm mt-4 block text-center">
+          Already have an account?
+        </Link>
+      </form>
+    </div>
+  );
 };
 
 export default RegistrationPage;

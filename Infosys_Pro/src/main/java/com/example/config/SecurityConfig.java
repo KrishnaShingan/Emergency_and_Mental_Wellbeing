@@ -26,7 +26,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/assessment/history").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/assessment/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/assessment/**").permitAll()
-
+                .requestMatchers(HttpMethod.GET, "/api/profile").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/profile/update").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/location/save").permitAll()

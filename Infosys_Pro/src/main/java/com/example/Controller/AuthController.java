@@ -24,14 +24,29 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody User user) {
-    Map<String, String> result = authService.loginUser(user);
-
-    if (result != null) {
-        return ResponseEntity.ok(result);  // ✅ Return JSON with token
-    } else {
-        return ResponseEntity.status(401).body("Invalid email or password");
+    public ResponseEntity<?> login(@RequestBody User user) {
+        Map<String, String> result = authService.loginUser(user);
+        return result != null ? ResponseEntity.ok(result) : ResponseEntity.status(401).body("Invalid email or password");
     }
-}
 
+    // 🔹 Step 1: User enters email, return the security question
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> getSecurityQuestion(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String question = authService.getSecurityQuestion(email);
+        return question != null ? ResponseEntity.ok(Map.of("securityQuestion", question)) 
+                                : ResponseEntity.status(404).body("User not found");
+    }
+
+    // 🔹 Step 2: User answers security question and resets password
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String securityAnswer = request.get("securityAnswer");
+        String newPassword = request.get("newPassword");
+
+        String result = authService.resetPassword(email, securityAnswer, newPassword);
+        return result.equals("Password reset successful") ? ResponseEntity.ok(result) 
+                                                          : ResponseEntity.status(400).body(result);
+    }
 }

@@ -6,8 +6,11 @@ import Home from './components/Home';
 import Layout from './Layout';
 import RegistrationPage from './components/RegistrationPage';
 import LoginPage from './components/LoginPage';
+import ForgotPasswordPage from './components/ForgotPasswordPage';
 import Landing from './components/Landing';
 import Help from './components/NavComponents/Help';
+import Profile from './components/NavComponents/Profile';
+import ProjectDetails from './components/NavComponents/ProjectDetails';
 import Health from './components/NavComponents/Health';
 import Support from './components/NavComponents/Support';
 import Video from './components/NavComponents/Video';
@@ -37,6 +40,7 @@ const App = () => {
           <Route path="/landing" element={<Landing />} />
           <Route path="/home" element={user ? <Home onLogout={handleLogout} /> : <Navigate to="/landing" />} />
           <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/login" element={<LoginPage setUser={setUser} />} />
           <Route path="/help" element={user ? <Help /> : <Navigate to="/landing" />} />
           <Route path="/health" element={user ? <Health username={user.username} /> : <Navigate to="/landing" />} />
@@ -44,6 +48,8 @@ const App = () => {
           <Route path="/video" element={user ? <Video /> : <Navigate to="/landing" />} />
           <Route path="/mood" element={user ? <Mood username={user.username} /> : <Navigate to="/landing" />} />
           <Route path="/news" element={user ? <News username={user.username} /> : <Navigate to="/landing" />} />
+          <Route path="/profile" element={user ? <Profile username={user.username} /> : <Navigate to="/landing" />} />
+          <Route path="/project-details" element={user ? <ProjectDetails /> : <Navigate to="/landing" />} />
           <Route path="/tasks" element={user ? <Task username={user.username} /> : <Navigate to="/landing" />} />
         </Route>
       </Routes>
