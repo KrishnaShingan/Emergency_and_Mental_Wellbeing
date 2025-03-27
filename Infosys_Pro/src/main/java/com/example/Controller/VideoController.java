@@ -8,8 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpStatus;
 
 @RestController
-@RequestMapping("/api/videos")
-@CrossOrigin(origins = "http://localhost:3000")  // ✅ Allow frontend access
+@RequestMapping("/api/videos")// ✅ Allow frontend access
 public class VideoController {
 
     private static final Map<String, Object> cache = new ConcurrentHashMap<>();

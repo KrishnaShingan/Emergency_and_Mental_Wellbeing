@@ -55,6 +55,7 @@ const Health = ({ username }) => {
       setScore(response.data.score);
       setStep(4);
       fetchHistory();
+      clearForm();
     } catch (error) {
       console.error("Error submitting assessment:", error);
     }
@@ -80,6 +81,11 @@ const Health = ({ username }) => {
     } catch (error) {
       console.error("Error deleting assessment:", error);
     }
+  };
+
+  const clearForm = () => {
+    setResponses({});
+    setError("");
   };
 
   return (

@@ -1,80 +1,104 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const [mood, setMood] = useState(null);
+  const navigate = useNavigate();
 
-  // Sample quotes (could be fetched from an API or expanded)
-  const dailyQuotes = [
-    { text: "You are enough just as you are.", author: "Megan Markle" },
-    { text: "The best way out is always through.", author: "Robert Frost" },
-    { text: "Happiness is not by chance, but by choice.", author: "Jim Rohn" },
-  ];
-  const randomQuote = dailyQuotes[Math.floor(Math.random() * dailyQuotes.length)];
-
-  const handleMoodSelect = (selectedMood) => {
-    setMood(selectedMood);
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userEmail");
+    window.location.href = "/login";
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Animated Background Circles */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute w-96 h-96 bg-teal-200 rounded-full opacity-20 animate-pulse-slow top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute w-72 h-72 bg-blue-200 rounded-full opacity-20 animate-pulse-slow bottom-0 right-0 translate-x-1/4 translate-y-1/4"></div>
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-gray-100 flex flex-col items-center justify-center p-6">
       {/* Hero Section */}
-      <section className="text-center z-10 mb-12">
+      <section className="text-center mb-12">
         <h1 className="text-5xl font-bold text-teal-700 mb-4 animate-fade-in">
-          Your Mental Haven
+          Welcome to Your Wellbeing Hub
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          A space to breathe, reflect, and find strength—crafted for your peace and preparedness.
+          A sanctuary for your mental health and a lifeline in emergencies—support is just a click away.
         </p>
-      </section>
-
-      {/* Daily Wellbeing Spotlight */}
-      <section className="bg-white shadow-lg rounded-lg p-8 max-w-3xl mx-auto text-center z-10">
-        <h2 className="text-2xl font-semibold text-teal-600 mb-6">Daily Spotlight</h2>
-
-        {/* Inspirational Quote */}
-        <div className="mb-8">
-          <p className="text-xl text-gray-700 italic">"{randomQuote.text}"</p>
-          <p className="text-sm text-gray-500 mt-2">— {randomQuote.author}</p>
-        </div>
-
-        {/* Quick Mood Check-In */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-700 mb-4">How are you feeling today?</h3>
-          <div className="flex justify-center gap-4">
-            {[
-              { emoji: "😊", label: "Happy" },
-              { emoji: "😐", label: "Neutral" },
-              { emoji: "😔", label: "Sad" },
-            ].map(({ emoji, label }) => (
-              <button
-                key={label}
-                onClick={() => handleMoodSelect(label)}
-                className={`text-4xl p-4 rounded-full transition duration-300 ${
-                  mood === label ? "bg-teal-100 shadow-md" : "hover:bg-gray-100"
-                }`}
-              >
-                {emoji}
-              </button>
-            ))}
-          </div>
-          {mood && (
-            <p className="mt-4 text-gray-600">
-              You’re feeling {mood.toLowerCase()} today. Take a moment for yourself—explore our tools!
-            </p>
-          )}
+        <div className="mt-6 flex gap-4 justify-center">
+          <button
+            onClick={() => navigate("/health")}
+            className="bg-teal-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-teal-700 transition duration-300"
+          >
+            Check Your Wellbeing
+          </button>
+          <button
+            onClick={() => navigate("/help")}
+            className="bg-red-500 text-white px-6 py-3 rounded-md shadow-md hover:bg-red-600 transition duration-300"
+          >
+            Emergency SOS
+          </button>
         </div>
       </section>
 
-      {/* Footer Note */}
-      <p className="text-gray-500 text-sm mt-8 z-10">
-        Navigate your journey using the menu above.
-      </p>
+      {/* Feature Highlights */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
+        <FeatureCard
+          title="Mood Tracker"
+          description="Log your emotions daily and see your journey."
+          icon="🧘"
+          path="/mood"
+          bgColor="bg-teal-100"
+        />
+        <FeatureCard
+          title="AI Chat Support"
+          description="Talk to our 24/7 virtual assistant."
+          icon="🤖"
+          path="/support"
+          bgColor="bg-blue-100"
+        />
+        <FeatureCard
+          title="Video Resources"
+          description="Watch calming and inspiring content."
+          icon="🎥"
+          path="/video"
+          bgColor="bg-green-100"
+        />
+        <FeatureCard
+          title="Task Manager"
+          description="Stay organized with ease."
+          icon="📋"
+          path="/tasks"
+          bgColor="bg-yellow-100"
+        />
+      </section>
+
+      {/* Call to Action */}
+      <section className="bg-white shadow-lg rounded-lg p-8 max-w-3xl mx-auto text-center">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          Your Mental Health Matters
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Explore tools designed to uplift your spirit and keep you prepared for any moment.
+        </p>
+        <button
+          onClick={() => navigate("/project-details")}
+          className="bg-teal-600 text-white px-6 py-3 rounded-md hover:bg-teal-700 transition duration-300"
+        >
+          Learn More About Us
+        </button>
+      </section>
+
+    </div>
+  );
+};
+
+// Reusable Feature Card Component
+const FeatureCard = ({ title, description, icon, path, bgColor }) => {
+  const navigate = useNavigate();
+  return (
+    <div
+      onClick={() => navigate(path)}
+      className={`${bgColor} p-6 rounded-lg shadow-sm hover:shadow-md transition duration-300 cursor-pointer`}>
+      <div className="text-4xl mb-4">{icon}</div>
+      <h3 className="text-xl font-medium text-gray-800 mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
     </div>
   );
 };

@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/mood")
-@CrossOrigin(origins = "http://localhost:3000")
 public class MoodController {
     @Autowired
     private MoodService moodService;

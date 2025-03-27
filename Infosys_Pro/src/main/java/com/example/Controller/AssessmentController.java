@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/assessment")
-@CrossOrigin(origins = "http://localhost:3000")  // Only allow requests from React frontend
+ // Only allow requests from React frontend
 public class AssessmentController {
 
     @Autowired

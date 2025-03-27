@@ -3,6 +3,7 @@ import axios from "axios";
 import { PaperAirplaneIcon, XIcon } from "@heroicons/react/solid";
 import { motion } from "framer-motion";
 
+
 const Support = () => {
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello! I’m here to assist with mental wellbeing and emergencies. How can I help?" }

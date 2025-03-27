@@ -7,7 +7,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/chatbot")
-@CrossOrigin(origins = "http://localhost:3000") // ✅ Allow React frontend
+ // ✅ Allow React frontend
 public class ChatbotController {
 
     private static final String GEMINI_API_KEY = "AIzaSyCGNNqEkz72r8C2h10xZ496EJN48UNYisE";  

@@ -11,8 +11,7 @@ import org.springframework.http.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/news")
-@CrossOrigin(origins = "http://localhost:3000") // Allow frontend requests
+@RequestMapping("/news") // Allow frontend requests
 public class NewsController {
 
     @Autowired
